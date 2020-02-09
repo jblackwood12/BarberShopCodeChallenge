@@ -1,0 +1,271 @@
+﻿@model WebApplication1.Models.ScheduleCustomerModel
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Barber Shop Code Challenge - By Justin Blackwood</title>
+
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+	<!-- JS includes -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+	<script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+	<script src="//ajax.aspnetcdn.com/ajax/mvc/4.0/jquery.validate.unobtrusive.min.js"></script>
+
+	<style type="text/css">
+		.field-validation-error {
+			color: #ff0000;
+		}
+
+		.assigned-barber{
+			background-color: #c3e6cb;
+		}
+
+		.not-assigned-barber{
+			background-color: #d6d8db;
+		}
+
+		.align-form-labels{
+			display:block;
+			float: left;
+			width: 10em;
+			margin-right: 1em;
+			line-height: 32px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-lg-6">
+				<h1>Barber Shop Code Challenge</h1>
+				<h5>by Justin Blackwood</h5>
+				<br />
+
+				<h3>Estimated Time</h3> <div id="estimatedTimeDiv"></div>
+				<br />
+
+				<h3>Schedule Appointment</h3>
+
+				@using (Html.BeginForm())
+				{
+					<div class="form-group" style="width:600px;">
+						@Html.LabelFor(m => m.Name, new { @class = "align-form-labels" })
+						@Html.EditorFor(model => model.Name, new { @class = "form-control" })
+						@Html.ValidationMessageFor(model => model.Name)
+						<br />
+						<br />
+
+						@Html.LabelFor(m => m.PhoneNumber, new { @class = "align-form-labels" })
+						@Html.EditorFor(model => model.PhoneNumber, new { @class = "form-control" })
+						@Html.ValidationMessageFor(model => model.PhoneNumber)
+						<br />
+						<br />
+
+						@*Only barber names allowed are: Joe, and Gary*@
+						@Html.LabelFor(m => m.BarberName, new { @class = "align-form-labels" })
+						@Html.EditorFor(model => model.BarberName, new { @class = "form-control" })
+						@Html.ValidationMessageFor(model => model.BarberName)
+					</div>
+
+					<button type="button" class="btn btn-success submit">Submit</button>
+				}
+
+				<br />
+				<div class="alert alert-warning fade">
+					<strong><span class="alert-content"></span></strong>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-lg-6">
+				<h3>Scheduled Customers</h3>
+				<div id="scheduledCustomersDiv">
+
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-lg-6" style="margin-top:70px;">
+				<p>
+					<a class="btn btn-primary" data-toggle="collapse" href="#collapseImplementationDetails" role="button" aria-expanded="false" aria-controls="collapseExample">
+						View Implementation Details
+					</a>
+				</p>
+				<div class="collapse" id="collapseImplementationDetails">
+					<div class="card card-body">
+						<b>Written by: Justin Blackwood</b>
+						<br />
+						Started on February 7th, 2020 at 5:00pm EST
+						<br />
+						Completed on February 8th, 2020 at 9:15pm EST
+						<br />
+						<br />
+						<b>Technical Details:</b>
+						<br />
+						Data is persisted for 60 minutes using server-side Session data storage.
+						<br />
+						Uses newest version of ASP.NET MVC: 5.2.7.0
+						<br />
+						Uses ASP.NET Razor, JavaScript, JQuery and Bootstrap styles.
+						<br />
+						Has client-side and server-side validation.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+			// Call this function anytime we add customer or shift barbers using "In Chair" button.
+			function updateCustomerList() {
+				$.ajax({
+						url: '@Url.RouteUrl(new{ action="GetScheduledCustomers", controller="Barber"})',
+						type: 'POST',
+						dataType: 'json',
+						contentType: 'application/json',
+						data: JSON.stringify({
+						}),
+						success: function (data) {
+						// clear out the text first.
+							$('#scheduledCustomersDiv').text('');
+
+							htmlString = '<table class="table"><tr><td>Customer Name</td><td>Phone Number</td><td>Wait Time (mins)</td><td>Barber Requested</td><td>Barber Management</td>';
+
+							for (i = 0; i < data.length; i++)
+							{
+								thisCustomer = data[i];
+
+								inChairButtonHtml = '';
+								nextBarberAvailable = '';
+
+								// if barber is assigned we can style the rows differently.
+								isBarberAssigned = false;
+
+								if (thisCustomer.CurrentBarberAssigned == null) {
+									inChairButtonHtml = '<button style="padding-right:20px;" class="btn btn-info submit" onclick="updateInChair(' + '\'' + thisCustomer.AppointmentID + '\'' + ',' + '\'' + thisCustomer.BarberNameRequested + '\'' + ', 1)">In Chair</button>'; // put value of 1 at end for "InChair" option.
+									nextBarberAvailable = '<button class="btn btn-info submit" onclick="updateInChair(' + '\'' + thisCustomer.AppointmentID + '\'' + ',' + '\'' + thisCustomer.BarberNameRequested + '\'' + ', 2)">Lowest Wait Time</button>'; // put value of 2 at end for "NextAvailableBarber" option.
+								} else {
+									// Includes the button to mark the customer is done at this particular barber.
+									inChairButtonHtml = 'Assigned to: ' + thisCustomer.CurrentBarberAssigned + ' ' + '<button style="" class="btn btn-info submit" onclick="updateInChair(' + '\'' + thisCustomer.AppointmentID + '\'' + ',' + '\'' + thisCustomer.BarberNameRequested + '\'' + ', 3)">Mark Done</button>'; // put value of 3 at end for "MarkDone" option.
+									isBarberAssigned = true;
+								}
+
+								trclass = (isBarberAssigned ? 'class="assigned-barber"' : 'class="not-assigned-barber"'); // conditionally apply styling.
+
+								htmlString = htmlString + 
+									'<tr ' + trclass + '>' +
+									'<td>' + thisCustomer.Name + '</td>' +
+									'<td>' + thisCustomer.PhoneNumber + '</td>' +
+									'<td>' + thisCustomer.WaitTime + '</td>' +
+									'<td>' + thisCustomer.BarberNameRequested + '</td>' +
+									'<td>' + inChairButtonHtml + nextBarberAvailable + '</td>' +
+									'</tr>';
+							}
+
+							htmlString = htmlString +  '</tr></table>';
+
+							$('#scheduledCustomersDiv').append(htmlString);
+
+							// after updating the list, let's update the overall Barber Wait Times.
+							displayAllBarberWaitTimes();
+						},
+						error: function (error) {
+							$('#scheduledCustomersDiv').text('error');
+						}
+					});
+			}
+
+			function displayAllBarberWaitTimes() {
+				$.ajax({
+					url: '@Url.RouteUrl(new{ action="GetEstimatedTime", controller="Barber"})',
+					type: 'POST',
+					dataType: 'json',
+					contentType: 'application/json',
+					data: JSON.stringify({
+					}),
+					success: function (data) {
+						$('#estimatedTimeDiv').text(data);
+					},
+					error: function (error) {
+						alert(error);
+					}
+				});
+			}
+
+			function updateInChair(appointmentID, barberNameRequested, barberScheduleType) {
+				$.ajax({
+					url: '@Url.RouteUrl(new{ action="SetCustomerInBarberChair", controller="Barber"})',
+					type: 'POST',
+					dataType: 'json',
+					contentType: 'application/json',
+					data: JSON.stringify({
+						AppointmentID: appointmentID,
+						BarberNameRequested: barberNameRequested,
+						BarberScheduleType: barberScheduleType
+					}),
+					success: function (data) {
+						updateCustomerList();
+					},
+					error: function (error) {
+						alert(error);
+					}
+				});
+			}
+
+			function openAlert(txt) {
+				$('.alert-content').text(txt);
+				$('.alert').addClass('in');
+			}
+
+			function closeAlert() {
+				$('.alert').removeClass('in');
+			}
+
+			$(function(){
+				$('.submit').click(function(){
+					if($('form').valid()) {
+						$.ajax({
+							url: '@Url.RouteUrl(new{ action="ScheduleCustomer", controller="Barber"})',
+							type: 'POST',
+							dataType: 'json',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								Name: $('#Name').val(),
+								PhoneNumber: $('#PhoneNumber').val(),
+								BarberName: $('#BarberName').val()
+							}),
+							success: function (data) {
+								openAlert(data);
+
+								updateCustomerList();
+							},
+							error: function (error) {
+								alert(error);
+							}
+						});
+
+					}
+					else {
+						closeAlert();
+					}
+				});
+
+				// Populate wait times and scheduled customer list.
+				updateCustomerList();
+			});
+
+	</script>
+</body>
+</html>
