@@ -1,0 +1,210 @@
+﻿@model WebApplication2.Models.ScheduleCustomerModel
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" ng-app="barberScheduleApp">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Barber Shop Code Challenge AngularJS - By Justin Blackwood</title>
+
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="~/Content/BarberScheduler.css" @*Load specific css*@
+
+	<!-- JS includes -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+	<script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+	<script src="//ajax.aspnetcdn.com/ajax/mvc/4.0/jquery.validate.unobtrusive.min.js"></script>
+
+	<script src="~/Scripts/angularjs-1.7.9/angular.min.js"></script>
+	<script src="~/Scripts/AngularApps/BarberSchedulerApp.js"></script>  @*// Load the angular App.*@
+</head>
+
+<body>
+	<div class="container-fluid" ng-controller="scheduledCustomersController as scc">
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-lg-6">
+				<h1>Barber Shop Code Challenge AngularJS</h1>
+				<h5>by Justin Blackwood</h5>
+				<br />
+
+				<div class="card">
+					<ul class="list-group">
+						<li class="list-group-item" style="background-color:#c6c8ca; color: #1b1e21; padding: 4px 10px 10px 10px;"">
+							<h3>Estimated Time</h3>
+						</li>
+
+						<li class="list-group-item" style="padding: 0px; border-top-width:0px;">
+							<table class="table" style="margin:0px;" ng-init="scc.getBarbersAndWaitTimes()">
+								<tr style="font-weight:700">
+									<td>Barber Name</td>
+									<td>Wait Time (mins):</td>
+								</tr>
+
+								<tr ng-repeat="barberAndWaitTime in scc.barbersAndWaitTimes"
+									ng-class="{'success': barberAndWaitTime.WaitTimeSuccess,
+								   'warning': barberAndWaitTime.WaitTimeWarning,
+								   'danger': barberAndWaitTime.WaitTimeDanger}">
+									<td>
+										{{barberAndWaitTime.BarberName}}
+									</td>
+									<td>
+										{{barberAndWaitTime.WaitTime}}
+									</td>
+								</tr>
+							</table>
+						</li>
+					</ul>
+				</div>
+
+				<br />
+
+				@using (Html.BeginForm())
+				{
+					<div class="card">
+						<ul class="list-group">
+							<li class="list-group-item" style="background-color:#c6c8ca; color: #1b1e21; padding: 4px 10px 10px 10px;">
+								<h3>Schedule Appointment</h3>
+							</li>
+
+							<li class="list-group-item">
+								@Html.LabelFor(m => m.Name, new { @class = "align-form-labels" })
+								@Html.EditorFor(model => model.Name, new { @class = "form-control" })
+								@Html.ValidationMessageFor(model => model.Name)
+							</li>
+
+							<li class="list-group-item">
+								@Html.LabelFor(m => m.PhoneNumber, new { @class = "align-form-labels" })
+								@Html.EditorFor(model => model.PhoneNumber, new { @class = "form-control" })
+								@Html.ValidationMessageFor(model => model.PhoneNumber)
+							</li>
+
+							<li class="list-group-item">
+								@*Only barber names allowed are: Joe, and Gary*@
+								@Html.LabelFor(m => m.BarberName, new { @class = "align-form-labels" })
+								@Html.EditorFor(model => model.BarberName, new { @class = "form-control" })
+								@Html.ValidationMessageFor(model => model.BarberName)
+							</li>
+
+							<li class="list-group-item">
+								<div style="display: inline-block;">
+									<button ng-click="scc.scheduleCustomer()" type="button" class="btn btn-success btn-lg submit" style="float:left;">Submit</button>
+									<div id="scheduleCustomerAlertDiv" class="alert alert-warning fade" style="float:right; margin: 0 0 0 50px; font-weight: 700">
+										<strong><span class="alert-content"></span></strong>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				}
+				<br />
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-lg-6">
+				<ul class="list-group">
+					<li class="list-group-item" style="background-color:#c6c8ca; color: #1b1e21; padding: 4px 10px 10px 10px;"">
+						<h3>Scheduled Customers</h3>
+					</li>
+
+					<li class="list-group-item" style="padding: 0px; border-top-width:0px;">
+						<div id="scheduledCustomersDiv" ng-init="scc.getAllScheduledCustomers()">
+							<table class="table" style="margin:0px;">
+								<tr style="font-weight:700">
+									<td>Customer Name</td>
+									<td>Phone Number</td>
+									<td>Wait Time (mins)</td>
+									<td>Barber Requested</td>
+									<td>Barber Management</td>
+								</tr>
+
+								<tr ng-repeat="scheduledCustomer in scc.scheduledCustomers" ng-class="{'assigned-barber': scheduledCustomer.CurrentBarberAssigned,
+																							'not-assigned-barber':!scheduledCustomer.CurrentBarberAssigned}">
+									<td> {{scheduledCustomer.Name}} </td>
+									<td> {{scheduledCustomer.PhoneNumber}} </td>
+									<td> {{scheduledCustomer.WaitTime}} </td>
+									<td> {{scheduledCustomer.BarberNameRequested}} </td>
+
+									@*if not assigned a barber*@
+									<td ng-if="!scheduledCustomer.CurrentBarberAssigned">
+										<button class="btn btn-info submit" ng-click="scc.moveScheduledCustomer(scheduledCustomer.AppointmentID, scheduledCustomer.BarberNameRequested, 1)">In Chair</button> @*put value of 1 at end for "InChair" option.*@
+										<button class="btn btn-info submit" ng-click="scc.moveScheduledCustomer(scheduledCustomer.AppointmentID, scheduledCustomer.BarberNameRequested, 2)">Lowest Wait Time</button> @*put value of 2 at end for "NextAvailableBarber" option.*@
+									</td>
+
+									@*if assigned a barber*@
+									<td ng-if="scheduledCustomer.CurrentBarberAssigned">
+										Assigned to: {{scheduledCustomer.CurrentBarberAssigned}}
+										<button class="btn btn-info submit" ng-click="scc.moveScheduledCustomer(scheduledCustomer.AppointmentID, scheduledCustomer.BarberNameRequested, 3)">Mark Done</button> @*put value of 3 at end for "MarkDone" option.*@
+									</td>
+								</tr>
+							</table>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-lg-6" style="margin-top:70px;">
+				<p>
+					<a class="btn btn-primary" data-toggle="collapse" href="#collapseImplementationDetails" role="button" aria-expanded="false" aria-controls="collapseExample">
+						View Implementation Details
+					</a>
+				</p>
+				<div class="collapse" id="collapseImplementationDetails">
+					<div class="card card-body">
+						<b>Written by: Justin Blackwood</b><br />
+						Started on February 7th, 2020 at 5:00pm EST<br />
+						Completed on February 8th, 2020 at 9:15pm EST <br />
+						AngularJS implementation built completely on February 10th, 2020<br /><br />
+
+						
+						<b>Technical Details:</b><br />
+						Data is persisted for 60 minutes using server-side Session data storage.<br />
+						Uses newest version of AngularJS v1.7.9<br />
+						Uses newest version of ASP.NET MVC: 5.2.7.0<br />
+						Uses ASP.NET Razor, JavaScript, JQuery and Bootstrap styles.<br />
+						Has client-side and server-side validation.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+			function openAlert(txt, messageType) {
+				alertType = '';
+
+				switch (messageType) {
+					case 'Success':
+						alertType = 'alert-success';
+						break;
+
+					case 'Warning':
+						alertType = 'alert-warning'
+						break;
+
+					case 'Danger':
+						alertType = 'alert-danger'
+						break;
+
+					default:
+						alertType = 'alert-danger'
+						break;
+				}
+
+				$('#scheduleCustomerAlertDiv').text(txt);
+				$('#scheduleCustomerAlertDiv').removeClass() // clear out the classes.
+				$('#scheduleCustomerAlertDiv').addClass('alert')
+				$('#scheduleCustomerAlertDiv').addClass(alertType)
+				$('#scheduleCustomerAlertDiv').addClass('in');
+			}
+	</script>
+</body>
+</html>
