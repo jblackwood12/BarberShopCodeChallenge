@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using WebApplication3.Models;
 
 namespace WebApplication3.Controllers
 {
@@ -8,7 +7,7 @@ namespace WebApplication3.Controllers
 		[HttpGet]
 		public ActionResult Index()
 		{
-			return View(new ScheduleCustomerModel());
+			return View("Index");
 		}
 	}
 }

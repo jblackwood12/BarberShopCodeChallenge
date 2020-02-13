@@ -8,6 +8,18 @@ namespace WebApplication3
 		// For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
 		public static void RegisterBundles(BundleCollection bundles)
 		{
+			bundles.Add(new ScriptBundle("~/bundles/Angular")
+			  .Include(
+				"~/bundles/AngularOutput/inline.*",
+				"~/bundles/AngularOutput/polyfills.*",
+				"~/bundles/AngularOutput/scripts.*",
+				"~/bundles/AngularOutput/vendor.*",
+				"~/bundles/AngularOutput/runtime.*",
+				"~/bundles/AngularOutput/main.*"));
+
+			bundles.Add(new StyleBundle("~/Content/Angular")
+			  .Include("~/bundles/AngularOutput/styles.*"));
+
 			bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
 						"~/Scripts/jquery-{version}.js"));
 

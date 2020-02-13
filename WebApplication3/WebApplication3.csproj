@@ -36,6 +36,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
+    <LegacyPublishPropertiesPageEnabled>true</LegacyPublishPropertiesPageEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -133,6 +135,21 @@
     <Compile Include="Utility\OrdinalUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Angular\.gitignore" />
+    <Content Include="Angular\e2e\protractor.conf.js" />
+    <Content Include="Angular\karma.conf.js" />
+    <Content Include="Angular\protractor.conf.js" />
+    <Content Include="Angular\src\app\app.component.css" />
+    <Content Include="Angular\src\app\app.component.html" />
+    <Content Include="Angular\src\favicon.ico" />
+    <Content Include="Angular\src\index.html" />
+    <Content Include="Angular\src\styles.css" />
+    <Content Include="Bundles\AngularOutput\favicon.ico" />
+    <Content Include="Bundles\AngularOutput\main.js" />
+    <Content Include="Bundles\AngularOutput\polyfills.js" />
+    <Content Include="Bundles\AngularOutput\runtime.js" />
+    <Content Include="Bundles\AngularOutput\styles.css" />
+    <Content Include="Bundles\AngularOutput\vendor.js" />
     <Content Include="Content\BarberScheduler.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -173,6 +190,23 @@
     <Content Include="Scripts\angularjs-1.7.9\version.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Angular\.editorconfig" />
+    <Content Include="Angular\angular.json" />
+    <Content Include="Angular\browserslist" />
+    <Content Include="Angular\e2e\tsconfig.json" />
+    <Content Include="Angular\package-lock.json" />
+    <Content Include="Angular\package.json" />
+    <Content Include="Angular\README.md" />
+    <Content Include="Angular\src\assets\.gitkeep" />
+    <Content Include="Angular\tsconfig.app.json" />
+    <Content Include="Angular\tsconfig.json" />
+    <Content Include="Angular\tsconfig.spec.json" />
+    <Content Include="Angular\tslint.json" />
+    <Content Include="Bundles\AngularOutput\main.js.map" />
+    <Content Include="Bundles\AngularOutput\polyfills.js.map" />
+    <Content Include="Bundles\AngularOutput\runtime.js.map" />
+    <Content Include="Bundles\AngularOutput\styles.css.map" />
+    <Content Include="Bundles\AngularOutput\vendor.js.map" />
     <None Include="Properties\PublishProfiles\BarberShopCodeChallenge - Web Deploy.pubxml" />
     <Content Include="Scripts\angularjs-1.7.9\angular-animate.min.js.map" />
     <Content Include="Scripts\angularjs-1.7.9\angular-aria.min.js.map" />
@@ -234,7 +268,19 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\AngularApps\Angular\BarberSchedulerAppAngular.ts" />
+    <TypeScriptCompile Include="Angular\BarberAndWaitTime.ts" />
+    <TypeScriptCompile Include="Angular\e2e\src\app.e2e-spec.ts" />
+    <TypeScriptCompile Include="Angular\e2e\src\app.po.ts" />
+    <TypeScriptCompile Include="Angular\ScheduleAppointmentFeedback.ts" />
+    <TypeScriptCompile Include="Angular\ScheduledCustomer.ts" />
+    <TypeScriptCompile Include="Angular\src\app\app.component.ts" />
+    <TypeScriptCompile Include="Angular\src\app\app.module.ts" />
+    <TypeScriptCompile Include="Angular\src\CustomerToSchedule.ts" />
+    <TypeScriptCompile Include="Angular\src\environments\environment.prod.ts" />
+    <TypeScriptCompile Include="Angular\src\environments\environment.ts" />
+    <TypeScriptCompile Include="Angular\src\main.ts" />
+    <TypeScriptCompile Include="Angular\src\polyfills.ts" />
+    <TypeScriptCompile Include="Angular\src\test.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

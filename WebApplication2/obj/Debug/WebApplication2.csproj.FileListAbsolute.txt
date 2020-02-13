@@ -230,3 +230,4 @@ C:\code\BarberShopCodeChallenge\WebApplication2\bin\Microsoft.CodeDom.Providers.
 C:\code\BarberShopCodeChallenge\WebApplication2\obj\Debug\WebApplication2.csproj.CopyComplete
 C:\code\BarberShopCodeChallenge\WebApplication2\obj\Debug\WebApplication2.dll
 C:\code\BarberShopCodeChallenge\WebApplication2\obj\Debug\WebApplication2.pdb
+C:\code\BarberShopCodeChallenge\WebApplication2\obj\Debug\WebApplication2.csprojAssemblyReference.cache
