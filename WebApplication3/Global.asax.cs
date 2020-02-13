@@ -16,6 +16,9 @@ namespace WebApplication3
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+			// Issue with minifying Angular
+			BundleTable.EnableOptimizations = false;
 		}
 
 		protected void Session_start(object sender, EventArgs e)

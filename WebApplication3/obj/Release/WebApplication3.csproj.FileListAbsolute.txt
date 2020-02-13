@@ -75,3 +75,4 @@ C:\code\BarberShopCodeChallenge\WebApplication3\bin\Microsoft.CodeDom.Providers.
 C:\code\BarberShopCodeChallenge\WebApplication3\obj\Release\WebApplication3.csproj.CopyComplete
 C:\code\BarberShopCodeChallenge\WebApplication3\obj\Release\WebApplication3.dll
 C:\code\BarberShopCodeChallenge\WebApplication3\obj\Release\WebApplication3.pdb
+C:\code\BarberShopCodeChallenge\WebApplication3\obj\Release\WebApplication3.csprojAssemblyReference.cache
